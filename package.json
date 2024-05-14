@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "jquery": "^3.7.1",
+    "web3": "^4.8.0"
+  },
+  "devDependencies": {
+    "parcel": "^2.12.0"
+  }
+}

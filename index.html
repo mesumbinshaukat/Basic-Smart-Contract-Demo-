@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo - Smart Contract</title>
+</head>
+
+<body>
+
+    <h1>Demo - Smart Contract</h1>
+
+    <input type="number" id="amt" placeholder="Amount">
+    <button id="dep">Deposit</button>
+    <button id="with">Withdraw</button>
+
+    <div id="bal"></div>
+
+    <script src="node_modules/web3/dist/web3.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/web3@4.8.0/dist/web3.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <script>
+
+        var contract
+
+        $(document).ready(function () {
+            web3 = new Web3(window.ethereum);
+
+            var address = "0x66A08C67C3BE3AB70546b913eF008352C67f756A" // This is contract address, not account address
+
+            var abi = [
+                {
+                    "inputs": [
+                        {
+                            "internalType": "int256",
+                            "name": "amt",
+                            "type": "int256"
+                        }
+                    ],
+                    "name": "deposit",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "constructor"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "int256",
+                            "name": "amt",
+                            "type": "int256"
+                        }
+                    ],
+                    "name": "withdraw",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "getBal",
+                    "outputs": [
+                        {
+                            "internalType": "int256",
+                            "name": "",
+                            "type": "int256"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                }
+            ]
+
+            contract = new web3.eth.Contract(abi, address)
+
+            contract.methods.getBal().call().then(function (bal) {
+                $("#bal").html("Balance: " + bal)
+            })
+
+
+
+
+        })
+
+        // Deposit
+        $("#dep").click(function () {
+            var amt = 0;
+            amt = parseInt($("#amt").val());
+
+            web3.eth.getAccounts().then(function (accounts) {
+                var acc = accounts[0];
+                return contract.methods.deposit(amt).send({
+                    from: acc
+                }); // Don't forget to connect your metamask wallet manually by clicking on 3 dots on the top right corner. Otherwise it will throw this error: "i: Contract "from" address not specified"
+            }).then(function (tx) {
+                console.log(tx);
+            }).catch(function (err) {
+                console.log("Error Msg: " + err);
+            })
+        })
+
+        // Withdraw
+        $("#with").click(function () {
+            var amt = 0;
+            amt = parseInt($("#amt").val());
+
+            web3.eth.getAccounts().then(function (accounts) {
+                var acc = accounts[0];
+                return contract.methods.withdraw(amt).send({
+                    from: acc
+                }); // Don't forget to connect your metamask wallet manually by clicking on 3 dots on the top right corner. Otherwise it will throw this error: "i: Contract "from" address not specified"
+            }).then(function (tx) {
+                console.log(tx);
+            }).catch(function (err) {
+                console.log("Error Msg: " + err);
+            })
+        })
+    </script>
+</body>
+
+</html>
